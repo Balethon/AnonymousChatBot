@@ -1,5 +1,19 @@
 from balethon.objects import Keyboard
 
-start = Keyboard(["ثبت نام"])
+start = Keyboard(
+    ["ثبت نام"]
+)
 
-main_menu = Keyboard(["چت ناشناس"])
+main_menu = Keyboard(
+    ["چت ناشناس"],
+    ["پروفایل من"]
+)
+
+anonymous_chat = Keyboard(
+    ["لغو"]
+)
+
+my_profile = Keyboard(
+    ["تغییر نام"],
+    ["تغییر سن"]
+)
