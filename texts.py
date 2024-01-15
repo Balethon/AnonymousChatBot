@@ -25,3 +25,8 @@ cancel = """
 my_profile = """
 پروفایل شما
 """.strip()
+
+user_profile = """
+نام: {name}
+سن: {age}
+""".strip()
