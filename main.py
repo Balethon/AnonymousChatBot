@@ -44,7 +44,7 @@ async def cancel(message: Message):
 
 @bot.on_message(conditions.at_state("MAIN") & conditions.regex(f"^پروفایل من$"))
 async def my_profile(message: Message):
-    await message.reply(texts.my_profile, keyboards.main_menu)
+    await message.reply(texts.my_profile, keyboards.my_profile)
 
 
 if __name__ == "__main__":
