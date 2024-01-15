@@ -31,9 +31,20 @@ async def age_state(message: Message):
     message.author.set_state("MAIN")
 
 
-@bot.on_message(conditions.at_state("MAIN"))
-async def main_state(message: Message):
-    await message.reply(texts.main_menu, keyboards.main_menu)
+@bot.on_message(conditions.at_state("MAIN") & conditions.regex(f"^چت ناشناس$"))
+async def anonymous_chat(message: Message):
+    await message.reply(texts.anonymous_chat, keyboards.anonymous_chat)
+    message.author.set_state("SEARCHING")
+
+
+@bot.on_message(conditions.at_state("SEARCHING") & conditions.regex(f"^لغو$"))
+async def cancel(message: Message):
+    await message.reply(texts.cancel, keyboards.main_menu)
+
+
+@bot.on_message(conditions.at_state("MAIN") & conditions.regex(f"^پروفایل من$"))
+async def my_profile(message: Message):
+    await message.reply(texts.my_profile, keyboards.main_menu)
 
 
 if __name__ == "__main__":
