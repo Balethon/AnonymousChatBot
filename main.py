@@ -4,6 +4,7 @@ from balethon.objects import Message
 import config
 import texts
 import keyboards
+from database import Database
 
 bot = Client(config.TOKEN)
 
@@ -21,12 +22,18 @@ async def none_state(message: Message):
 
 @bot.on_message(conditions.at_state("NAME"))
 async def name_state(message: Message):
+    user = Database.load_user(message.author.id)
+    user.name = message.text
+
     await message.reply(texts.give_age)
     message.author.set_state("AGE")
 
 
 @bot.on_message(conditions.at_state("AGE"))
 async def age_state(message: Message):
+    user = Database.load_user(message.author.id)
+    user.age = message.text
+
     await message.reply(texts.main_menu, keyboards.main_menu)
     message.author.set_state("MAIN")
 
@@ -44,7 +51,9 @@ async def cancel(message: Message):
 
 @bot.on_message(conditions.at_state("MAIN") & conditions.regex(f"^پروفایل من$"))
 async def my_profile(message: Message):
-    await message.reply(texts.my_profile, keyboards.my_profile)
+    user = Database.load_user(message.author.id)
+
+    await message.reply(f"{texts.my_profile}: {user}", keyboards.my_profile)
 
 
 if __name__ == "__main__":
