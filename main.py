@@ -1,5 +1,6 @@
 from balethon import Client, conditions
-from balethon.objects import Message, KeyboardRemove
+from balethon.objects import Message, KeyboardRemove, User
+from balethon.states import StateMachine
 
 import config
 import texts
@@ -7,6 +8,13 @@ import keyboards
 from database import Database
 
 bot = Client(config.TOKEN)
+
+User.state_machine = StateMachine("user_states")
+
+
+@bot.on_message(chain="print")
+def print_message(message: Message):
+    print(f"{message.author.full_name}: {message.text}")
 
 
 @bot.on_command()
