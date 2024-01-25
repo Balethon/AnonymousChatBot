@@ -2,7 +2,8 @@ import texts
 
 
 class User:
-    def __init__(self, name, age):
+    def __init__(self, id, name=None, age=None):
+        self.id = id
         self.name = name
         self.age = age
 

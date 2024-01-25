@@ -15,5 +15,6 @@ anonymous_chat = Keyboard(
 
 my_profile = Keyboard(
     ["تغییر نام"],
-    ["تغییر سن"]
+    ["تغییر سن"],
+    ["برگشت"]
 )

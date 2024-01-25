@@ -19,7 +19,7 @@ anonymous_chat = """
 """.strip()
 
 cancel = """
-جسنجوی مخاطب لغو شد
+جستجوی مخاطب لغو شد
 """.strip()
 
 my_profile = """
