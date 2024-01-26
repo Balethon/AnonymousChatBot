@@ -39,7 +39,7 @@ class Database:
     def select_user(cls, user_id):
         sql = """SELECT * FROM users WHERE user_id = ?"""
         cursor = cls.connection.cursor()
-        cursor.execute(sql, (int(user_id),))
+        cursor.execute(sql, (user_id,))
         return cursor.fetchone()
 
     @classmethod

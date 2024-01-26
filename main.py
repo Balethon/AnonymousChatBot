@@ -53,9 +53,22 @@ async def age_state(message: Message):
 
 
 @bot.on_message(conditions.at_state("MAIN") & conditions.regex(f"^چت ناشناس$"))
-async def anonymous_chat(message: Message):
-    await message.reply(texts.anonymous_chat, keyboards.anonymous_chat)
-    message.author.set_state("SEARCHING")
+async def anonymous_chat(client: Client, message: Message):
+    cursor = User.state_machine.connection.cursor()
+    cursor.execute("SELECT user_id FROM user_states WHERE user_state = ?", ("SEARCHING",))
+    user_id = cursor.fetchone()
+
+    if user_id is not None:
+        match = Database.load_user(user_id[0])
+        await message.reply(texts.found_match)
+        message.author.set_state("CHATTING")
+
+        await client.send_message(match.id, texts.found_match)
+        User.state_machine[match.id] = "CHATTING"
+
+    else:
+        await message.reply(texts.anonymous_chat, keyboards.anonymous_chat)
+        message.author.set_state("SEARCHING")
 
 
 @bot.on_message(conditions.at_state("SEARCHING") & conditions.regex(f"^لغو$"))
