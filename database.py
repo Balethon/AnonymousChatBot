@@ -8,23 +8,23 @@ class Database:
 
     @classmethod
     def create_table(cls):
-        sql = """CREATE TABLE IF NOT EXISTS users(user_id INTEGER PRIMARY KEY, name TEXT, age INTEGER)"""
+        sql = """CREATE TABLE IF NOT EXISTS users(user_id INTEGER PRIMARY KEY, name TEXT, age INTEGER, match_id INTEGER)"""
         cursor = cls.connection.cursor()
         cursor.execute(sql)
         cls.connection.commit()
 
     @classmethod
     def insert_user(cls, user):
-        sql = """INSERT INTO users VALUES (?, ?, ?)"""
+        sql = """INSERT INTO users VALUES (?, ?, ?, ?)"""
         cursor = cls.connection.cursor()
-        cursor.execute(sql, (user.id, user.name, user.age))
+        cursor.execute(sql, (user.id, user.name, user.age, user.match_id))
         cls.connection.commit()
 
     @classmethod
     def update_user(cls, user):
-        sql = """UPDATE users SET name = ?, age = ? WHERE user_id = ?"""
+        sql = """UPDATE users SET name = ?, age = ?, match_id = ? WHERE user_id = ?"""
         cursor = cls.connection.cursor()
-        cursor.execute(sql, (user.name, user.age, user.id))
+        cursor.execute(sql, (user.name, user.age, user.match_id, user.id))
         cls.connection.commit()
 
     @classmethod

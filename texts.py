@@ -10,6 +10,18 @@ give_age = """
 سن خود را وارد کنید
 """.strip()
 
+invalid_age = """
+سن باید عدد باشد
+""".strip()
+
+age_too_low = """
+سن نمیتواند از 10 کمتر باشد
+""".strip()
+
+age_too_high = """
+سن نمیتواند از 99 بیشتر باشد
+""".strip()
+
 main_menu = """
 به منوی اصلی خوش آمدید
 """.strip()
@@ -30,7 +42,19 @@ my_profile = """
 پروفایل شما
 """.strip()
 
+match_profile = """
+پروفایل مخاطب
+""".strip()
+
 user_profile = """
 نام: {name}
 سن: {age}
+""".strip()
+
+you_ended_chat = """
+شما چت را با مخاطب تمام کردید
+""".strip()
+
+match_ended_chat = """
+مخاطب چت را با شما تمام کرد
 """.strip()

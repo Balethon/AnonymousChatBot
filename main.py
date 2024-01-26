@@ -12,14 +12,30 @@ bot = Client(config.TOKEN)
 User.state_machine = StateMachine("user_states")
 
 
+def is_intable(string):
+    try:
+        int(string)
+    except ValueError:
+        return False
+    else:
+        return True
+
+
 @bot.on_message(chain="print")
 def print_message(message: Message):
-    print(f"{message.author.full_name}: {message.text}")
+    print(f"{message.author.full_name}: {message.text or message.caption or ''}")
 
 
 @bot.on_command()
 async def start(*, message: Message):
-    await message.reply(texts.start, keyboards.start)
+    user = Database.load_user(message.author.id)
+
+    if user.needs_registration():
+        await message.reply(texts.start, keyboards.start)
+
+    else:
+        await message.reply(texts.start, keyboards.main_menu)
+        message.author.set_state("MAIN")
 
 
 @bot.on_message(conditions.at_state(None))
@@ -44,8 +60,19 @@ async def name_state(message: Message):
 
 @bot.on_message(conditions.at_state("AGE"))
 async def age_state(message: Message):
+    if not is_intable(message.text):
+        return await message.reply(texts.invalid_age)
+
+    age = int(message.text)
+
+    if age < 10:
+        return await message.reply(texts.age_too_low)
+
+    if age > 99:
+        return await message.reply(texts.age_too_high)
+
     user = Database.load_user(message.author.id)
-    user.age = message.text
+    user.age = age
     Database.save_user(user)
 
     await message.reply(texts.main_menu, keyboards.main_menu)
@@ -60,11 +87,16 @@ async def anonymous_chat(client: Client, message: Message):
 
     if user_id is not None:
         match = Database.load_user(user_id[0])
-        await message.reply(texts.found_match)
-        message.author.set_state("CHATTING")
-
-        await client.send_message(match.id, texts.found_match)
+        match.match_id = message.author.id
+        Database.save_user(match)
+        await client.send_message(match.id, texts.found_match, keyboards.chatting)
         User.state_machine[match.id] = "CHATTING"
+
+        user = Database.load_user(message.author.id)
+        user.match_id = match.id
+        Database.save_user(user)
+        await message.reply(texts.found_match, keyboards.chatting)
+        message.author.set_state("CHATTING")
 
     else:
         await message.reply(texts.anonymous_chat, keyboards.anonymous_chat)
@@ -101,6 +133,33 @@ async def edit_age(message: Message):
 async def back(message: Message):
     await message.reply(texts.main_menu, keyboards.main_menu)
     message.author.set_state("MAIN")
+
+
+@bot.on_message(conditions.at_state("CHATTING") & conditions.regex(f"^مشاهده پروفایل مخاطب$"))
+async def see_profile(message: Message):
+    user = Database.load_user(message.author.id)
+    match = user.get_match()
+
+    await message.reply(f"{texts.match_profile}\n{match}")
+
+
+@bot.on_message(conditions.at_state("CHATTING") & conditions.regex(f"^اتمام چت$"))
+async def back(client: Client, message: Message):
+    await message.reply(texts.you_ended_chat, keyboards.main_menu)
+    message.author.set_state("MAIN")
+
+    user = Database.load_user(message.author.id)
+    match = user.get_match()
+
+    await client.send_message(match.id, texts.match_ended_chat, keyboards.main_menu)
+    User.state_machine[match.id] = "MAIN"
+
+
+@bot.on_message(conditions.at_state("CHATTING"))
+async def chatting(message: Message):
+    user = Database.load_user(message.author.id)
+
+    await message.copy(user.match_id)
 
 
 if __name__ == "__main__":
