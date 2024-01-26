@@ -9,7 +9,7 @@ from database import Database
 
 bot = Client(config.TOKEN)
 
-User.state_machine = StateMachine("user_states")
+User.state_machine = StateMachine("user_states.db")
 
 
 def is_intable(string):
