@@ -2,6 +2,14 @@ start = """
 سلام به بات چت ناشناس خوش آمدید
 """.strip()
 
+give_gender = """
+جنسیت خود را وارد کنید
+""".strip()
+
+invalid_gender = """
+جنسیت باید پسر یا دختر باشد
+""".strip()
+
 give_name = """
 نام خود را وارد کنید
 """.strip()
@@ -47,6 +55,7 @@ match_profile = """
 """.strip()
 
 user_profile = """
+جنسیت: {gender}
 نام: {name}
 سن: {age}
 """.strip()

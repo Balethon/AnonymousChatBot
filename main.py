@@ -40,8 +40,27 @@ async def start(*, message: Message):
 
 @bot.on_message(conditions.at_state(None))
 async def none_state(message: Message):
-    await message.reply(texts.give_name)
-    message.author.set_state("NAME")
+    await message.reply(texts.give_gender, keyboards.gender)
+    message.author.set_state("GENDER")
+
+
+@bot.on_message(conditions.at_state("GENDER"))
+async def gender_state(message: Message):
+    genders = {"پسر": 0, "دختر": 1}
+
+    if message.text not in genders:
+        return await message.reply(texts.invalid_gender)
+
+    user = Database.load_user(message.author.id)
+    user.gender = genders[message.text]
+    Database.save_user(user)
+
+    if user.name is None:
+        await message.reply(texts.give_name, KeyboardRemove())
+        message.author.set_state("NAME")
+    else:
+        await message.reply(texts.main_menu, keyboards.main_menu)
+        message.author.set_state("MAIN")
 
 
 @bot.on_message(conditions.at_state("NAME"))
@@ -115,6 +134,12 @@ async def my_profile(message: Message):
 
     await message.reply(f"{texts.my_profile}\n{user}", keyboards.my_profile)
     message.author.set_state("PROFILE")
+
+
+@bot.on_message(conditions.at_state("PROFILE") & conditions.regex(f"^تغییر جنسیت$"))
+async def edit_gender(message: Message):
+    await message.reply(texts.give_gender, keyboards.gender)
+    message.author.set_state("GENDER")
 
 
 @bot.on_message(conditions.at_state("PROFILE") & conditions.regex(f"^تغییر نام$"))
