@@ -67,3 +67,7 @@ you_ended_chat = """
 match_ended_chat = """
 مخاطب چت را با شما تمام کرد
 """.strip()
+
+admins = """
+پنل ادمین ها
+""".strip()

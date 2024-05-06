@@ -1,5 +1,5 @@
 from balethon import Client, conditions
-from balethon.objects import Message, KeyboardRemove, User
+from balethon.objects import Message, ReplyKeyboardRemove, User
 from balethon.states import StateMachine
 
 import config
@@ -56,7 +56,7 @@ async def gender_state(message: Message):
     Database.save_user(user)
 
     if user.name is None:
-        await message.reply(texts.give_name, KeyboardRemove())
+        await message.reply(texts.give_name, ReplyKeyboardRemove())
         message.author.set_state("NAME")
     else:
         await message.reply(texts.main_menu, keyboards.main_menu)
@@ -96,6 +96,12 @@ async def age_state(message: Message):
 
     await message.reply(texts.main_menu, keyboards.main_menu)
     message.author.set_state("MAIN")
+
+
+@bot.on_message(conditions.at_state("MAIN") & conditions.regex(f"^پنل ادمین ها$"))
+async def admins(message: Message):
+    await message.reply(texts.admins)
+    message.author.set_state("ADMINS")
 
 
 @bot.on_message(conditions.at_state("MAIN") & conditions.regex(f"^چت ناشناس$"))
@@ -144,13 +150,13 @@ async def edit_gender(message: Message):
 
 @bot.on_message(conditions.at_state("PROFILE") & conditions.regex(f"^تغییر نام$"))
 async def edit_name(message: Message):
-    await message.reply(texts.give_name, KeyboardRemove())
+    await message.reply(texts.give_name, ReplyKeyboardRemove())
     message.author.set_state("NAME")
 
 
 @bot.on_message(conditions.at_state("PROFILE") & conditions.regex(f"^تغییر سن$"))
 async def edit_age(message: Message):
-    await message.reply(texts.give_age, KeyboardRemove())
+    await message.reply(texts.give_age, ReplyKeyboardRemove())
     message.author.set_state("AGE")
 
 

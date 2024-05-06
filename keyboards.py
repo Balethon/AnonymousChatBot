@@ -1,31 +1,37 @@
-from balethon.objects import Keyboard
+from balethon.objects import ReplyKeyboard
 
-start = Keyboard(
+start = ReplyKeyboard(
     ["ثبت نام"]
 )
 
-gender = Keyboard(
+gender = ReplyKeyboard(
     ["پسر"],
     ["دختر"]
 )
 
-main_menu = Keyboard(
+main_menu = ReplyKeyboard(
     ["چت ناشناس"],
     ["پروفایل من"]
 )
 
-anonymous_chat = Keyboard(
+admins_main_menu = ReplyKeyboard(
+    ["چت ناشناس"],
+    ["پروفایل من"],
+    ["پنل ادمین ها"]
+)
+
+anonymous_chat = ReplyKeyboard(
     ["لغو"]
 )
 
-my_profile = Keyboard(
+my_profile = ReplyKeyboard(
     ["تغییر جنسیت"],
     ["تغییر نام"],
     ["تغییر سن"],
     ["برگشت"]
 )
 
-chatting = Keyboard(
+chatting = ReplyKeyboard(
     ["مشاهده پروفایل مخاطب"],
     ["اتمام چت"]
 )
