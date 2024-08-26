@@ -1,5 +1,5 @@
 from balethon import Client, conditions
-from balethon.objects import Message, ReplyKeyboardRemove, User
+from balethon.objects import Message, ReplyKeyboardRemove
 from balethon.states import StateMachine
 
 import config
@@ -9,7 +9,7 @@ from database import Database
 
 bot = Client(config.TOKEN)
 
-User.state_machine = StateMachine("user_states.db")
+StateMachine.global_state_machine.change_database("user_states.db")
 
 
 def is_intable(string):
@@ -19,11 +19,6 @@ def is_intable(string):
         return False
     else:
         return True
-
-
-@bot.on_message(chain="print")
-def print_message(message: Message):
-    print(f"{message.author.full_name}: {message.text or message.caption or ''}")
 
 
 @bot.on_command()
@@ -106,7 +101,7 @@ async def admins(message: Message):
 
 @bot.on_message(conditions.at_state("MAIN") & conditions.regex(f"^چت ناشناس$"))
 async def anonymous_chat(client: Client, message: Message):
-    cursor = User.state_machine.connection.cursor()
+    cursor = StateMachine.global_state_machine.connection.cursor()
     cursor.execute("SELECT user_id FROM user_states WHERE user_state = ?", ("SEARCHING",))
     user_id = cursor.fetchone()
 
@@ -115,7 +110,7 @@ async def anonymous_chat(client: Client, message: Message):
         match.match_id = message.author.id
         Database.save_user(match)
         await client.send_message(match.id, texts.found_match, keyboards.chatting)
-        User.state_machine[match.id] = "CHATTING"
+        StateMachine.global_state_machine[match.id] = "CHATTING"
 
         user = Database.load_user(message.author.id)
         user.match_id = match.id
@@ -183,7 +178,7 @@ async def back(client: Client, message: Message):
     match = user.get_match()
 
     await client.send_message(match.id, texts.match_ended_chat, keyboards.main_menu)
-    User.state_machine[match.id] = "MAIN"
+    StateMachine.global_state_machine[match.id] = "MAIN"
 
 
 @bot.on_message(conditions.at_state("CHATTING"))
